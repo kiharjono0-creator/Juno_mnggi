@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f766e">
+  <title>Kas GTM Jemaat Manggi</title>
+
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --secondary: #14b8a6;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #f59e0b;
+      --dark: #172033;
+      --muted: #64748b;
+      --light: #f1f5f9;
+      --white: #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f8fafc;
+      color: var(--dark);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #115e59, #0f766e, #14b8a6);
+      color: white;
+      padding: 42px 0 65px;
+      text-align: center;
+    }
+
+    header .logo {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+
+    header h1 {
+      font-size: clamp(24px, 5vw, 42px);
+      margin-bottom: 8px;
+    }
+
+    header p {
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    main {
+      margin-top: -35px;
+      padding-bottom: 45px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card,
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card {
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card::after {
+      content: "";
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      right: -25px;
+      top: -25px;
+      background: rgba(20, 184, 166, 0.1);
+    }
+
+    .summary-card .icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .summary-card h3 {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: normal;
+      margin-bottom: 5px;
+    }
+
+    .summary-card .amount {
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: bold;
+      color: var(--dark);
+    }
+
+    .income .amount {
+      color: var(--success);
+    }
+
+    .expense .amount {
+      color: var(--danger);
+    }
+
+    .balance {
+      background: linear-gradient(135deg, #ecfdf5, #ccfbf1);
+    }
+
+    .balance .amount {
+      color: var(--primary-dark);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card:last-child {
+      margin-bottom: 0;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: var(--primary-dark);
+    }
+
+    .card-title span {
+      font-size: 25px;
+    }
+
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .transaction {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fcfcfd;
+    }
+
+    .transaction-info {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .transaction-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #dcfce7;
+      flex-shrink: 0;
+    }
+
+    .transaction.expense-row .transaction-icon {
+      background: #fee2e2;
+    }
+
+    .transaction-name {
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .transaction-date {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .transaction-amount {
+      font-weight: bold;
+      white-space: nowrap;
+      color: var(--success);
+    }
+
+    .expense-row .transaction-amount {
+      color: var(--danger);
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 10px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #f0fdfa, #ecfeff);
+      border-left: 5px solid var(--secondary);
+      padding: 18px;
+      border-radius: 12px;
+      color: #334155;
+    }
+
+    .info-box ul {
+      margin-top: 13px;
+      padding-left: 22px;
+    }
+
+    .info-box li {
+      margin: 7px 0;
+    }
+
+    .account-list {
+      display: grid;
+      gap: 13px;
+    }
+
+    .account-item {
+      display: flex;
+      gap: 12px;
+      padding: 13px;
+      background: var(--light);
+      border-radius: 11px;
+    }
+
+    .account-item strong {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .account-item div:last-child {
+      font-weight: bold;
+    }
+
+    .contact-card {
+      background: linear-gradient(135deg, #14532d, #16a34a);
+      color: white;
+      border: none;
+    }
+
+    .contact-card .card-title {
+      color: white;
+    }
+
+    .contact-number {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 17px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button,
+    .button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 17px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      font-size: 14px;
+    }
+
+    .button-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .button-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .button-whatsapp {
+      background: white;
+      color: #15803d;
+    }
+
+    .button-light {
+      background: var(--light);
+      color: var(--dark);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--muted);
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
+    }
+
+    .add-form {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .summary-grid,
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        margin-top: -28px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      header {
+        padding: 30px 0 55px;
+      }
+
+      header .logo {
+        font-size: 38px;
+      }
+
+      .card,
+      .summary-card {
+        padding: 18px;
+        border-radius: 14px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+
+      .transaction-amount {
+        font-size: 13px;
+      }
+    }
+
+    @media print {
+      header {
+        padding: 20px;
+        background: #0f766e !important;
+        print-color-adjust: exact;
+      }
+
+      main {
+        margin-top: 20px;
+      }
+
+      .add-form,
+      .button-row,
+      .footer {
+        display: none !important;
+      }
+
+      .card,
+      .summary-card {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <div class="logo">🏗️</div>
+      <h1>Panitia Pembangunan</h1>
+      <p>GTM Jemaat Manggi</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="summary-grid">
+      <div class="summary-card income">
+        <div class="icon">💰</div>
+        <h3>Total Pemasukan</h3>
+        <div class="amount" id="totalIncome">Rp 0</div>
+      </div>
+
+      <div class="summary-card expense">
+        <div class="icon">💸</div>
+        <h3>Total Pengeluaran</h3>
+        <div class="amount" id="totalExpense">Rp 0</div>
+      </div>
+
+      <div class="summary-card balance">
+        <div class="icon">💵</div>
+        <h3>Saldo Kas</h3>
+        <div class="amount" id="totalBalance">Rp 0</div>
+      </div>
+    </section>
+
+    <section class="content-grid">
+
+      <div>
+        <div class="card">
+          <h2 class="card-title">
+            <span>📝</span> Riwayat Transaksi
+          </h2>
+
+          <div id="transactionList" class="transaction-list">
+            <div class="empty">
+              Belum ada transaksi.
+            </div>
+          </div>
+
+          <form id="transactionForm" class="add-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="transactionName">Nama transaksi</label>
+                <input
+                  type="text"
+                  id="transactionName"
+                  placeholder="Contoh: Sumbangan Jemaat"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="transactionAmount">Jumlah</label>
+                <input
+                  type="number"
+                  id="transactionAmount"
+                  placeholder="Contoh: 500000"
+                  min="1"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="transactionType">Jenis transaksi</label>
+                <select id="transactionType">
+                  <option value="income">Pemasukan</option>
+                  <option value="expense">Pengeluaran</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="transactionDate">Tanggal</label>
+                <input type="date" id="transactionDate" required>
+              </div>
+
+              <div class="form-group full">
+                <button type="submit" class="button-primary">
+                  ➕ Tambah Transaksi
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">
+            <span>🏗️</span> Informasi Pembangunan
+          </h2>
+
+          <div class="info-box">
+            <p>
+              Informasi pembangunan GTM Jemaat Manggi ditampilkan di sini.
+            </p>
+
+            <ul>
+              <li>Rencana pembangunan</li>
+              <li>Perkembangan pembangunan</li>
+              <li>Kebutuhan pembangunan</li>
+              <li>Pengumuman panitia</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2 class="card-title">
+            <span>🏦</span> Informasi Rekening
+          </h2>
+
+          <div class="account-list">
+            <div class="account-item">
+              <div>🏦</div>
+              <div>
+                <strong>Nama Bank</strong>
+                Bank belum diisi
+              </div>
+            </div>
+
+            <div class="account-item">
+              <div>💳</div>
+              <div>
+                <strong>No. Rekening</strong>
+                -
+              </div>
+            </div>
+
+            <div class="account-item">
+              <div>👤</div>
+              <div>
+                <strong>Atas Nama</strong>
+                -
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card contact-card">
+          <h2 class="card-title">
+            <span>📱</span> Hubungi Panitia
+          </h2>
+
+          <div class="contact-number">
+            WhatsApp Panitia
+          </div>
+
+          <!-- Ganti nomor 628123456789 dengan nomor WhatsApp panitia -->
+          <a
+            class="button button-whatsapp"
+            href="https://wa.me/628123456789?text=Halo%20Panitia%20Pembangunan%20GTM%20Jemaat%20Manggi"
+            target="_blank"
+          >
+            💬 Hubungi via WhatsApp
+          </a>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">
+            <span>🖨️</span> Cetak & PDF
+          </h2>
+
+          <div class="button-row">
+            <button class="button-primary" onclick="window.print()">
+              🖨️ Cetak Laporan
+            </button>
+
+            <button class="button-light" onclick="window.print()">
+              📄 Simpan PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <div class="footer">
+    © 2026 Panitia Pembangunan GTM Jemaat Manggi
+  </div>
+
+  <script>
+    const STORAGE_KEY = "kas_gtm_jemaat_manggi";
+
+    let transactions = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
+    const rupiah = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0
+    });
+
+    const form = document.getElementById("transactionForm");
+    const transactionList = document.getElementById("transactionList");
+    const dateInput = document.getElementById("transactionDate");
+
+    dateInput.value = new Date().toISOString().split("T")[0];
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+    }
+
+    function formatDate(date) {
+      return new Date(date + "T00:00:00").toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+    }
+
+    function updateSummary() {
+      const totalIncome = transactions
+        .filter(item => item.type === "income")
+        .reduce((total, item) => total + item.amount, 0);
+
+      const totalExpense = transactions
+        .filter(item => item.type === "expense")
+        .reduce((total, item) => total + item.amount, 0);
+
+      const balance = totalIncome - totalExpense;
+
+      document.getElementById("totalIncome").textContent = rupiah.format(totalIncome);
+      document.getElementById("totalExpense").textContent = rupiah.format(totalExpense);
+      document.getElementById("totalBalance").textContent = rupiah.format(balance);
+    }
+
+    function renderTransactions() {
+      transactionList.innerHTML = "";
+
+      if (transactions.length === 0) {
+        transactionList.innerHTML = `
+          <div class="empty">
+            Belum ada transaksi.
+          </div>
+        `;
+        return;
+      }
+
+      /*
+        Hanya lima transaksi terbaru yang ditampilkan.
+      */
+      const latestFive = transactions
+        .slice()
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+
+      latestFive.forEach(item => {
+        const isIncome = item.type === "income";
+
+        const transactionElement = document.createElement("div");
+        transactionElement.className =
+          "transaction " + (isIncome ? "" : "expense-row");
+
+        transactionElement.innerHTML = `
+          <div class="transaction-info">
+            <div class="transaction-icon">
+              ${isIncome ? "💰" : "💸"}
+            </div>
+
+            <div>
+              <div class="transaction-name">${escapeHtml(item.name)}</div>
+              <div class="transaction-date">${formatDate(item.date)}</div>
+            </div>
+          </div>
+
+          <div class="transaction-amount">
+            ${isIncome ? "+" : "-"} ${rupiah.format(item.amount)}
+          </div>
+        `;
+
+        transactionList.appendChild(transactionElement);
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("transactionName").value.trim();
+      const amount = Number(document.getElementById("transactionAmount").value);
+      const type = document.getElementById("transactionType").value;
+      const date = dateInput.value;
+
+      if (!name || !amount || !date) {
+        alert("Mohon lengkapi semua data.");
+        return;
+      }
+
+      transactions.push({
+        id: Date.now(),
+        name,
+        amount,
+        type,
+        date
+      });
+
+      saveData();
+      updateSummary();
+      renderTransactions();
+
+      form.reset();
+      dateInput.value = new Date().toISOString().split("T")[0];
+
+      alert("Transaksi berhasil ditambahkan.");
+    });
+
+    updateSummary();
+    renderTransactions();
+  </script>
+
+</body>
+</html>
